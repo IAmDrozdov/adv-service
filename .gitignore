@@ -1,0 +1,7 @@
+# SCALA
+target
+project/target
+*.class
+
+# Intellij
+.idea
