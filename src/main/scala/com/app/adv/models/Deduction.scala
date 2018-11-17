@@ -1,3 +1,3 @@
 package com.app.adv.models
 
-case class Deduction(amount: BigDecimal)
+case class Deduction(amount: Double)
