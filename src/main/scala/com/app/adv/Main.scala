@@ -9,17 +9,16 @@ import io.finch.circe._
 
 object Main extends App {
 
-  val api =
-    (
-      addAdvertiser :+:
-      getAllAdvertisers :+:
-      getAdvertiserById :+:
-      deleteAdvertiser :+:
-      updateAdvertiser :+:
-      checkCredits :+:
-      deductAmount).handle {
-      case e: Exception => InternalServerError(e)
-    }
+  val api = (
+    addAdvertiser :+:
+    getAllAdvertisers :+:
+    getAdvertiserById :+:
+    deleteAdvertiser :+:
+    updateAdvertiser :+:
+    checkCredits :+:
+    deductAmount).handle {
+    case e: Exception => InternalServerError(e)
+  }
 
   Await.ready(
     Http.server

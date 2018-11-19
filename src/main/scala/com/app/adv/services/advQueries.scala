@@ -14,7 +14,6 @@ object advQueries {
     "jdbc:h2:mem:adv-service;DB_CLOSE_DELAY=-1",
     "sa",
     ""
-
   )
   val y = xa.yolo
 
@@ -49,26 +48,35 @@ object advQueries {
   //
   def deleteAdv(id: Long): Unit = {
     sql"DELETE FROM ADVERTISER WHERE ID = $id"
+      .update.quick
+      .unsafeRunSync
+  }
+
+  def updateAdv(id: Long,
+                name: String,
+                contactName: String,
+                creditLimit: Double): Unit = {
+    sql"""UPDATE ADVERTISER
+          SET NAME=$name, CONTACT_NAME=$contactName, CREDIT_LIMIT=$creditLimit
+          WHERE ID = $id
+      """
       .update
       .quick
       .unsafeRunSync
   }
 
-  def updateAdv(id: Long, name: String, contactName: String, creditLimit: Double): Unit = {
-    sql"""UPDATE ADVERTISER
-          SET NAME=$name, CONTACT_NAME=$contactName, CREDIT_LIMIT=$creditLimit
-          WHERE ID = $id
-      """.update.quick.unsafeRunSync
-  }
-
-  def addAdv(name: String, contactName: String, creditLimit: Double): Advertiser = {
+  def addAdv(name: String,
+             contactName: String,
+             creditLimit: Double): Advertiser = {
     val query = for {
       _ <-
         sql"""INSERT INTO ADVERTISER (NAME, CONTACT_NAME, CREDIT_LIMIT)
               VALUES ($name, $contactName, $creditLimit)
-        """.update.run
+           """.update.run
       id <- sql"SELECT LASTVAL()".query[Long].unique
-      adv <- sql"SELECT * FROM ADVERTISER WHERE ID = $id".query[Advertiser].unique
+      adv <- sql"SELECT * FROM ADVERTISER WHERE ID = $id"
+        .query[Advertiser]
+        .unique
     } yield adv
     query.transact(xa).unsafeRunSync
   }
