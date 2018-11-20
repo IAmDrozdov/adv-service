@@ -2,21 +2,21 @@ package com.app.adv.services
 
 import cats.effect._
 import com.app.adv.models.Advertiser
+import com.typesafe.config.ConfigFactory
 import doobie._
 import doobie.implicits._
-
 import scala.concurrent.ExecutionContext
 
 object advQueries {
-  implicit val cs = IO.contextShift(ExecutionContext.global)
-  val xa = Transactor.fromDriverManager[IO](
-    "org.h2.Driver",
-    "jdbc:h2:mem:adv-service;DB_CLOSE_DELAY=-1",
-    "sa",
-    ""
+  private implicit val cs = IO.contextShift(ExecutionContext.global)
+  private val dbCfg = ConfigFactory.load().getConfig("adv-service.db")
+  private val xa = Transactor.fromDriverManager[IO](
+    dbCfg.getString("driver"),
+    dbCfg.getString("url"),
+    dbCfg.getString("user"),
+    dbCfg.getString("pass")
   )
-  val y = xa.yolo
-
+  private val y = xa.yolo
   import y._
 
   sql"""CREATE TABLE IF NOT EXISTS ADVERTISER

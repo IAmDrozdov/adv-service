@@ -2,7 +2,7 @@ lazy val finchVersion = "0.26.0"
 lazy val circeVersion = "0.10.1"
 lazy val scalatestVersion = "3.0.5"
 lazy val doobieVersion = "0.6.0"
-
+lazy val typesafeVersion = "1.3.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -20,6 +20,8 @@ lazy val root = (project in file("."))
       "org.tpolecat" %% "doobie-core"     % doobieVersion,
       "org.tpolecat" %% "doobie-h2" % doobieVersion,
       "org.tpolecat" %% "doobie-scalatest" % doobieVersion % "test",
-      "org.tpolecat" %% "doobie-specs2"   % doobieVersion
+      "org.tpolecat" %% "doobie-specs2"   % doobieVersion,
+
+      "com.typesafe" % "config" % typesafeVersion
     )
   )
