@@ -12,6 +12,7 @@ import shapeless.HNil
 object endpoints {
   private final val basePath: Endpoint[IO, HNil] = "api" :: "advertisers"
 
+
   val getAdvertiserById: Endpoint[IO, Advertiser] =
     get(basePath :: path[Long]) { id: Long =>
       doIfExists[Advertiser](id, Ok)
@@ -19,25 +20,30 @@ object endpoints {
   val getAllAdvertisers: Endpoint[IO, Seq[Advertiser]] = get(basePath) {
     val advs = getAllAdvs
     advs.isEmpty match {
-      case true => Ok(Seq.empty[Advertiser])
+      case true => NoContent
       case false => Ok(advs)
     }
   }
-  val deleteAdvertiser: Endpoint[IO, Boolean] = delete(basePath :: path[Long]) {
+  val deleteAdvertiser: Endpoint[IO, Unit] = delete(basePath :: path[Long]) {
     id: Long =>
-      doIfExists[Boolean](id, { adv: Advertiser => {
+      doIfExists[Unit](id, { adv: Advertiser => {
         deleteAdv(adv.id.get)
-        Ok(true)
+        Ok()
       }
       })
   }
-  val updateAdvertiser: Endpoint[IO, Boolean] =
+  val updateAdvertiser: Endpoint[IO, Unit] =
     put(basePath :: path[Long] :: jsonBody[Advertiser]) {
       (id: Long, adv: Advertiser) =>
-        doIfExists[Boolean](id, { _: Advertiser =>
-          updateAdv(id, adv.name, adv.contactName, adv.creditLimit)
-          Ok(true)
-        })
+        isValid(adv) && (adv.id.contains(id) || adv.id.isEmpty)  match {
+          case true =>
+            doIfExists[Unit](id, {
+              _: Advertiser =>
+                updateAdv(id, adv.name, adv.contactName, adv.creditLimit)
+                Ok()
+            })
+          case false => BadRequest(new RuntimeException)
+        }
     }
   val checkCredits: Endpoint[IO, Boolean] =
     post(basePath :: path[Long] :: "validate" :: jsonBody[Deduction]) {
@@ -65,11 +71,13 @@ object endpoints {
     }
   val addAdvertiser: Endpoint[IO, Advertiser] =
     post(basePath :: jsonBody[Advertiser]) { adv: Advertiser =>
-      adv.creditLimit > 0 && adv.name != "" && adv.contactName != "" match {
+      isValid(adv) match {
         case true => Created(addAdv(adv.name, adv.contactName, adv.creditLimit))
         case false => BadRequest(new RuntimeException)
       }
     }
+
+  private def isValid(adv: Advertiser) = adv.creditLimit > 0 && adv.name != "" && adv.contactName != ""
 
   private def isValid(credits: Double, amount: Double): Boolean = credits >= amount
 
