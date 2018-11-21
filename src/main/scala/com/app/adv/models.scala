@@ -9,9 +9,10 @@ object models {
       contactName: String,
       var creditLimit: Double,
       id: Option[Long] = None
-  ) {
+    ) {
     def deduct(amount: Double): Unit = {
       creditLimit = creditLimit - amount
     }
   }
+
 }

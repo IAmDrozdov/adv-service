@@ -22,6 +22,8 @@ lazy val root = (project in file("."))
       "org.tpolecat" %% "doobie-scalatest" % doobieVersion % "test",
       "org.tpolecat" %% "doobie-specs2"   % doobieVersion,
 
-      "com.typesafe" % "config" % typesafeVersion
+      "com.typesafe" % "config" % typesafeVersion,
+
+      "io.swagger" %% "swagger-scala-module" % "1.0.3"
     )
   )

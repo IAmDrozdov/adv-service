@@ -5,6 +5,7 @@ import com.app.adv.models.Advertiser
 import com.typesafe.config.ConfigFactory
 import doobie._
 import doobie.implicits._
+
 import scala.concurrent.ExecutionContext
 
 object advQueries {
@@ -17,6 +18,7 @@ object advQueries {
     dbCfg.getString("pass")
   )
   private val y = xa.yolo
+
   import y._
 
   sql"""CREATE TABLE IF NOT EXISTS ADVERTISER

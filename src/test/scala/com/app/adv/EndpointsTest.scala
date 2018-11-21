@@ -8,9 +8,9 @@ import com.typesafe.config.ConfigFactory
 import io.circe.generic.auto._
 import io.finch._
 import io.finch.circe._
-import org.scalatest.{BeforeAndAfterAll, FunSuite}
+import org.scalatest.FunSuite
 
-class MainTest extends FunSuite with BeforeAndAfterAll {
+class EndpointsTest extends FunSuite {
   private val basePath = "/api/advertisers"
   private val rightAdv1 = Advertiser("Sasha", "Sasha", 1D)
   private val rightAdv2 = Advertiser("Gleb", "Gleb", 13D)
@@ -107,7 +107,7 @@ class MainTest extends FunSuite with BeforeAndAfterAll {
       .withBody[Application.Json](rightAdv1.copy(name = ""))).awaitOutputUnsafe()
 
     assert(
-        rightOutput.map(_.status).contains(Status.Ok) &&
+      rightOutput.map(_.status).contains(Status.Ok) &&
         getAdvById(1).contains(rightAdv2.copy(id = Some(1)))
     )
     assert(
@@ -139,7 +139,7 @@ class MainTest extends FunSuite with BeforeAndAfterAll {
       deductAmount(Input.post(basePath + "/1/deduct")
         .withBody[Application.Json](Deduction(10D))).awaitOutputUnsafe()
         .map(_.status).contains(Status.Ok) &&
-      getAdvById(1).contains(rightAdv2.copy(creditLimit = 3D, id= Some(1)))
+        getAdvById(1).contains(rightAdv2.copy(creditLimit = 3D, id = Some(1)))
     )
     // 3
     assert(
@@ -148,4 +148,5 @@ class MainTest extends FunSuite with BeforeAndAfterAll {
         .map(_.status).contains(Status.BadRequest)
     )
   }
+
 }
