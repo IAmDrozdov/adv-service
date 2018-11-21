@@ -29,6 +29,7 @@ object advQueries {
         ID NUMBER NOT NULL AUTO_INCREMENT,
         PRIMARY KEY (ID)
         );
+        CREATE INDEX IDX_ID ON ADVERTISER(ID);
     """.update.quick.unsafeRunSync
 
   def getAdvById(id: Long): Option[Advertiser] = {
