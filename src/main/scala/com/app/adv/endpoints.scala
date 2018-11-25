@@ -62,7 +62,7 @@ object endpoints {
         doIfExists[Unit](id, { adv: Advertiser =>
           isValidTransaction(adv.creditLimit, ded.amount) match {
             case true =>
-              val  deducted = adv.deduct(ded.amount)
+              val  deducted = adv deduct ded.amount
               updateAdv(id, deducted.name, deducted.contactName, deducted.creditLimit)
               Ok()
             case false =>
