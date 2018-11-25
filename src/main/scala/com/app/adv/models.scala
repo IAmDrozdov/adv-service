@@ -10,9 +10,8 @@ object models {
       var creditLimit: Double,
       id: Option[Long] = None
     ) {
-    def deduct(amount: Double): Unit = {
-      creditLimit = creditLimit - amount
+    def deduct(amount: Double): Advertiser = {
+      this.copy(creditLimit=this.creditLimit - amount)
     }
   }
-
 }

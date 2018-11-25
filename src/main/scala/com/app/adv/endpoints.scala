@@ -62,8 +62,8 @@ object endpoints {
         doIfExists[Unit](id, { adv: Advertiser =>
           isValidTransaction(adv.creditLimit, ded.amount) match {
             case true =>
-              adv.deduct(ded.amount)
-              updateAdv(id, adv.name, adv.contactName, adv.creditLimit)
+              val  deducted = adv.deduct(ded.amount)
+              updateAdv(id, deducted.name, deducted.contactName, deducted.creditLimit)
               Ok()
             case false =>
               BadRequest(new RuntimeException)
